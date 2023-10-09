@@ -11,6 +11,9 @@ const (
 	DefaultConfigPath = "grape.json"
 )
 
+var RunNotice = `🍇 now watching for changes ✨`
+var StopNotice = `🍇 stopped watching for changes, cleaning up... ✨`
+
 var onCmd = &cobra.Command{
 	Use:   "on",
 	Short: "use [on] to configure grape on the go without a config file.",
@@ -21,19 +24,21 @@ var onCmd = &cobra.Command{
 		if run == "" {
 			fmt.Println(failText("run command is required"))
 			cmd.Help()
+			return
 		}
 
 		config, err := FromFlags(run, targets, exclude)
 		if err != nil {
 			fmt.Println(failText(err.Error()))
 			cmd.Help()
+			return
 		}
 
 		if err := Run(config, "default"); err != nil {
 			fmt.Println(failText(err.Error()))
 			cmd.Help()
+			return
 		}
-
 	},
 }
 
@@ -49,11 +54,17 @@ var runCmd = &cobra.Command{
 	Use:   "run",
 	Short: "use [run] to run grape with a config file and switch between namespaces.",
 	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) == 0 {
+			fmt.Println(failText("namespace argument is missing"))
+			cmd.Help()
+			return
+		}
 
 		config, err := FromJson(cmd.Flag("config").Value.String())
 		if err != nil {
 			fmt.Println(failText(err.Error()))
 			cmd.Help()
+			return
 		}
 
 		namespace := args[0]
