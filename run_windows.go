@@ -11,6 +11,14 @@ import (
 	"syscall"
 )
 
+func Run(config *Config, namespace string) error {
+	// For now, we'll use a placeholder. We need to decide whether
+	// the functionality for watching files and running commands on change
+	// should differ for Windows vs. other platforms.
+	fmt.Println("Windows-specific run not implemented yet!")
+	return nil
+}
+
 func run(ns *Namespace) *exec.Cmd {
 	chunks := strings.Fields(ns.Run)
 	if len(chunks) == 0 {
